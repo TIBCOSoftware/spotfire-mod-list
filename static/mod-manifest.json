@@ -1,0 +1,17 @@
+{
+    "apiVersion": "1.2",
+    "version": "1.0",
+    "name": "List",
+    "id": "sfire-mod-list",
+    "icon": "icon.svg",
+    "dataViewDefinition": {
+        "axes": [
+            {
+                "name": "List",
+                "mode": "categorical",
+                "placement": "none"
+            }
+        ]
+    },
+    "files": ["index.html", "main.css", "bundle.js"]
+}
