@@ -1,0 +1,148 @@
+body {
+    margin: 0px;
+    overflow: hidden;
+    padding: 0px;
+}
+
+#mod-container {
+    margin: 0px;
+    padding: 0px;
+    display: flexbox;
+    flex-direction: column;
+}
+
+#scrollBar {
+    position: absolute;
+    border-style: Solid;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+}
+
+#scrollBarHandle {
+    position: absolute;
+    border-style: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+#ScrollBarButtonTop {
+    position: absolute;
+    border-bottom-style: Solid;
+    border-bottom-width: 1px;
+}
+
+#arrowUp {
+    position: absolute;
+    left: 2px;
+    top: 4px;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #d8d9dc;
+}
+
+#arrowDown {
+    position: absolute;
+    left: 2px;
+    top: 4px;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #d8d9dc;
+}
+
+#ScrollBarButtonBottom {
+    position: absolute;
+    border-top-style: Solid;
+    border-top-width: 1px;
+}
+
+
+#scrollThumb {
+    position: absolute;
+    background-color: blue;
+}
+
+.list-item {
+    cursor: default;
+    user-select: none;
+    white-space: nowrap;
+    font-weight: normal;
+    padding-left: 1em;
+    overflow: hidden;
+    text-transform: none;
+    line-height: 1.4;
+}
+
+.list-item-superheader {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.list-item-header {
+    font-weight: bold;
+    text-transform: none;
+}
+
+.inactiveMarking {
+    background-color: cornflowerblue;
+    border: black;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+}
+
+.activeMarking {
+    background-color: #3760db36;
+    border: #797b85;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-style: solid;
+    pointer-events: none;
+    position: absolute;
+}
+
+#searchbox {
+    margin-bottom:5px;
+    width: 100%;
+    border-style:solid;
+    border-width:1px;
+    border-radius: 4px;
+    padding:4px;;
+    outline-width: 0;
+}
+
+#search-control {
+    display:none;
+    margin-left: 8px;
+}
+
+#list-control {
+    margin-left: 8px;
+}
+
+#settings {
+    position:absolute;
+    width:12px;
+    height:12px;
+    align-items: center;
+    top:0px;
+    fill:#ccc;
+    visibility: hidden;
+}
+
+#settings:hover {
+    color: #ddd;
+}

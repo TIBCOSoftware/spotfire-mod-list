@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Spotfire Mod Template</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style id="extra_styling"></style>
+        <link rel="stylesheet" type="text/css" media="all" href="main.css" />
+    </head>
+    <body>
+        <div id="mod-container">
+            <div id="settings">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                    <path
+                        d="M8.65 10.88c-.1-.03-.21-.06-.34-.1l-.52-.16a2.044 2.044 0 0 0-.28-.64l.33-.58c.05-.09.11-.19.17-.28l.04-.06.08-.12.06-.11-.91-.91-.11.06-.13.07-.95.5a2.99 2.99 0 0 0-.63-.29l-.11-.57a1.275 1.275 0 0 0-.12-.41l-.05-.17V7H3.92v.11l-.33 1.15c-.23.11-.41.17-.64.29l-.28-.18-.01-.01-.05-.02L2 8.02l-.19-.1h-.05l-.51.56-.34.3.06.11.56 1.09a2.39 2.39 0 0 0-.22.58l-.62.16a3.771 3.771 0 0 1-.69.24v1.27l.11.05 1.2.33c.05.19.16.41.22.58l-.56 1.1-.06.11.85.86h.05l.69-.38.45-.22a2.041 2.041 0 0 0 .58.22l.34 1.02.04.07.01.03h1.26l.05-.1.33-1.02a2.594 2.594 0 0 0 .64-.28l.51.28.68.36.61-.63.19-.19-.06-.11-.05-.05a4.025 4.025 0 0 0-.24-.46l-.28-.58a2.242 2.242 0 0 0 .28-.63l.54-.17a3.388 3.388 0 0 0 .51-.17H9v-1.29a3.502 3.502 0 0 1-.35-.08zm-4.12 2.44a1.82 1.82 0 0 1 0-3.64 1.82 1.82 0 0 1 0 3.64z"
+                    ></path>
+                </svg>
+            </div>
+            <div id="search-control"></div>
+            <div id="list-control"></div>
+        </div>
+        <script id="spotfire-loader">
+            var Spotfire = (function (e) {
+                "use strict";
+                return (
+                    (e.initialize = function (e) {
+                        var t = "sfTemp" + 1e4 * Math.random() + "Cb",
+                            r = window;
+                        r[t] = e;
+                        var a = { subject: "GetUrl", callbackId: -1, options: { cbId: t } };
+                        r.addEventListener("message", function e(t) {
+                            if (t.source !== r.parent || !t.data.src) return;
+                            r.removeEventListener("message", e);
+                            var a = document,
+                                n = a.createElement("script");
+                            (n.src = t.data.src), (a.head || a.body).appendChild(n);
+                        }),
+                            r.parent.postMessage(a, "*");
+                    }),
+                    e
+                );
+            })({});
+        </script>
+        <script src="bundle.js"></script>
+    </body>
+</html>
