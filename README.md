@@ -1,5 +1,9 @@
 # List Mod for TIBCO Spotfire®
+
+<img src="https://community.tibco.com/servlet/rtaImage?eid=ka64z0000008RhU&feoid=00N4z000003259u&refid=0EM4z000003UmPC" alt="List Mod for TIBCO Spotfire®" width="520" height="325">
+
 Display a selectable list of unique values in a column or a hierarchy.
+
 
 ## Installation & Use
 
