@@ -66,7 +66,7 @@ export function scrollBarControl(context: d3.Selection<d3.BaseType, unknown, HTM
             .attr("draggable", "false")
             .attr("id", "scrollBarHandle")
             .on("mousedown", scrollBarHandleMouseDown)
-            .on("dragstart",preventDragging);
+            .on("dragstart", preventDragging);
     }
 
     return {
@@ -132,6 +132,9 @@ export function scrollBarControl(context: d3.Selection<d3.BaseType, unknown, HTM
         handleTop = scrollBarScale(value);
 
         handleHeight = scrollBarScale(value + extent - 1) - scrollBarScale(value);
+        if (handleHeight < 2) {
+            handleHeight = 2;
+        }
         scrollBarHandle
             .style("width", "8px")
             .style("background-color", color)
@@ -173,12 +176,12 @@ export function scrollBarControl(context: d3.Selection<d3.BaseType, unknown, HTM
      */
 
     function preventDragging(event: MouseEvent) {
-       /** 
-        * Prevent dragging from interfering with the behavior of the scrollbar.
-        * In theory this should not be necessary but for some reason dragging is initiated on
-        * the scrollbar handle in the Spotfire windows client if the previous attempt to move the handle
-        * is terminated outside the scrollbar.
-        * */ 
+        /**
+         * Prevent dragging from interfering with the behavior of the scrollbar.
+         * In theory this should not be necessary but for some reason dragging is initiated on
+         * the scrollbar handle in the Spotfire windows client if the previous attempt to move the handle
+         * is terminated outside the scrollbar.
+         * */
         event.preventDefault();
     }
 
@@ -228,19 +231,17 @@ export function scrollBarControl(context: d3.Selection<d3.BaseType, unknown, HTM
 
     function scrollBarMouseUp(event: MouseEvent) {
         if (handleDrag) {
-        handleDrag = false;
-        adjustScrollHandle(event);
+            handleDrag = false;
+            adjustScrollHandle(event);
         }
         document.removeEventListener("mouseup", scrollBarMouseUp);
         document.removeEventListener("mousemove", scrollBarMouseMove);
-
-        
     }
 
     function scrollBarMouseMove(event: MouseEvent) {
         if (handleDrag) {
-        adjustScrollHandle(event);
-    }
+            adjustScrollHandle(event);
+        }
     }
 
     function adjustScrollHandle(event: MouseEvent) {

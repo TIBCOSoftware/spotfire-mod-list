@@ -16,8 +16,6 @@ interface Rect {
     y2: number;
 }
 
-const DEBUG = true;
-
 /**
  * Constants
  */
@@ -63,19 +61,30 @@ Spotfire.initialize(async (mod) => {
         mod.property<boolean>("reverseItemsOrder")
     );
 
-    reader.subscribe(generalErrorHandler(mod)(onChange), (err) => {
-        mod.controls.errorOverlay.show(err);
-    });
+    reader.subscribe(render);
 
     scrollBarControlInstance = scrollBarControlInstance || scrollBarControl(listControl);
 
-    async function onChange(
+    async function render(
         dataView: DataView,
         windowSize: Spotfire.Size,
         searchExpression: ModProperty<string>,
         showSearchfield: ModProperty<boolean>,
         reverseItemsOrder: ModProperty<boolean>
     ) {
+
+        /**
+         * Check the data view for errors
+         */
+        let errors = await dataView.getErrors();
+        if (errors.length > 0) {
+            // Showing an error overlay will hide the mod iframe.
+            listElements.selectAll("*").remove();
+            mod.controls.errorOverlay.show(errors);
+            return;
+        }
+        mod.controls.errorOverlay.hide();
+
         /**
          * Coonfigure styling
          */
@@ -116,7 +125,6 @@ Spotfire.initialize(async (mod) => {
 
         let listHierarchy = await dataView.hierarchy(listAxisName);
         if (!listHierarchy) {
-            listElements.selectAll("*").remove();
             return;
         }
 
@@ -130,47 +138,41 @@ Spotfire.initialize(async (mod) => {
 
         let hierarchy: d3.HierarchyNode<DataViewHierarchyNode> = d3.hierarchy(list);
 
+        /**
+         * Sort
+         */
+
         if (hasSortAxis) {
             hierarchy.sum((d) => {
                 return d.children ? 0 : d.rows()[0].continuous(sortAxisName)?.value() || 0;
             });
 
-            hierarchy.sort((a, b) => {
-                let aValue = a?.value || 0;
-                let bValue = b?.value || 0;
-                return reverseItemsOrder.value() ? aValue - bValue : bValue - aValue;
-            });
+            if (reverseItemsOrder.value()) {
+                hierarchy.sort((a, b) => d3.descending(a.value, b.value));
+            } else {
+                hierarchy.sort((a, b) => d3.ascending(a.value, b.value));
+            }
         } else {
-            let compareValue = 0;
-
-            hierarchy.sort((a, b) => {
-                if (reverseItemsOrder.value()) {
-                    compareValue = b.data
-                        .formattedValue()
-                        .toLowerCase()
-                        .localeCompare(a.data.formattedValue().toLowerCase());
-                } else {
-                    compareValue = a.data
-                        .formattedValue()
-                        .toLowerCase()
-                        .localeCompare(b.data.formattedValue().toLowerCase());
-                }
-                return compareValue;
-            });
+            let collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+            if (reverseItemsOrder.value()) {
+                hierarchy.sort((a, b) => collator.compare(b.data.formattedValue(), a.data.formattedValue()));
+            } else {
+                hierarchy.sort((a, b) => collator.compare(a.data.formattedValue(), b.data.formattedValue()));
+            }
         }
+
+        /**
+         * Convert all nodes that matches the search expression into a flat list
+         */
 
         let listItems: d3.HierarchyNode<DataViewHierarchyNode>[] = [];
 
         let expression = searchExpression?.value() || "";
+        let sf: ReturnType<typeof spotfireSearch> = spotfireSearch(expression);
 
         let searchBoxElement = searchBox.node();
         if (searchBoxElement) searchBoxElement.value = expression;
 
-        // convert from Spotfire expression language to regExp
-
-        let sf: ReturnType<typeof spotfireSearch> = spotfireSearch(expression);
-
-        // flatten the hiearchy and convert all matching nodes to a list
         hierarchy.eachBefore((node: d3.HierarchyNode<DataViewHierarchyNode>) => {
             if (
                 node.depth > 0 &&
@@ -408,60 +410,3 @@ Spotfire.initialize(async (mod) => {
         }
     }
 });
-
-/**
- * subscribe callback wrapper with general error handling, row count check and an early return when the data has become invalid while fetching it.
- *
- * The only requirement is that the dataview is the first argument.
- * @param mod - The mod API, used to show error messages.
- * @param rowLimit - Optional row limit.
- */
-export function generalErrorHandler<T extends (dataView: Spotfire.DataView, ...args: any) => any>(
-    mod: Spotfire.Mod,
-    rowLimit = 2000
-): (a: T) => T {
-    return function (callback: T) {
-        return async function callbackWrapper(dataView: Spotfire.DataView, ...args: any) {
-            try {
-                const errors = await dataView.getErrors();
-                if (errors.length > 0) {
-                    mod.controls.errorOverlay.show(errors, "DataView");
-                    return;
-                }
-                mod.controls.errorOverlay.hide("DataView");
-
-                /**
-                 * Hard abort if row count exceeds an arbitrary selected limit
-                 */
-                const rowCount = await dataView.rowCount();
-                if (rowCount && rowCount > rowLimit) {
-                    mod.controls.errorOverlay.show(
-                        `☹️ Cannot render - too many rows (rowCount: ${rowCount}, limit: ${rowLimit}) `,
-                        "General"
-                    );
-                    return;
-                }
-
-                /**
-                 * User interaction while rows were fetched. Return early and respond to next subscribe callback.
-                 */
-                const allRows = await dataView.allRows();
-                if (allRows == null) {
-                    return;
-                }
-
-                await callback(dataView, ...args);
-
-                mod.controls.errorOverlay.hide("General");
-            } catch (e) {
-                if (e instanceof Error) {
-                    mod.controls.errorOverlay.show(e.message, "General");
-
-                    if (DEBUG) {
-                        throw e;
-                    }
-                }
-            }
-        } as T;
-    };
-}
