@@ -1,7 +1,8 @@
 # List Mod for TIBCO Spotfire®
 
-Display a selectable list of unique values in a column or a hierarchy.
+<img src="assets/list.png" width="60%"/>
 
+Display a selectable list of unique values in a column or a hierarchy.
 
 ## Installation & Use
 
