@@ -6,6 +6,8 @@ Display a selectable list of unique values in a column or a hierarchy.
 
 ## Installation & Use
 
+[Download latest version](https://github.com/TIBCOSoftware/spotfire-mod-list/releases)
+
 The [Wiki](https://github.com/TIBCOSoftware/spotfire-mod-list/wiki) contains step-by-step instruction on how to install and use this Mod in TIBCO Spotfire®.
 
 ## Building the Project
