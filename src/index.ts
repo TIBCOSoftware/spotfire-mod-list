@@ -53,6 +53,12 @@ Spotfire.initialize(async (mod) => {
      */
     const context = mod.getRenderContext();
 
+    searchBox.on("input",searchBoxChangeHandler);
+
+    function searchBoxChangeHandler(event: InputEvent) {
+        mod.property("searchExpression").set(searchBox.node()?.value || "");
+    }
+
     const reader = mod.createReader(
         mod.visualization.data(),
         mod.windowSize(),
@@ -171,8 +177,8 @@ Spotfire.initialize(async (mod) => {
         let sf: ReturnType<typeof spotfireSearch> = spotfireSearch(expression);
 
         let searchBoxElement = searchBox.node();
-        if (searchBoxElement) searchBoxElement.value = expression;
-
+        if (searchBoxElement && !searchBoxElement.value) searchBoxElement.value = expression;
+ 
         hierarchy.eachBefore((node: d3.HierarchyNode<DataViewHierarchyNode>) => {
             if (
                 node.depth > 0 &&
@@ -277,16 +283,6 @@ Spotfire.initialize(async (mod) => {
         renderList();
 
         context.signalRenderComplete();
-
-        /**
-         * Search
-         */
-
-        searchBox.on("input", searchBoxChangeHandler);
-
-        function searchBoxChangeHandler(event: InputEvent) {
-            mod.property("searchExpression").set(searchBox.node()?.value || "");
-        }
 
         /**
          * Enable rectangle selection
